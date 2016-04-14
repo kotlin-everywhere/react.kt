@@ -1,0 +1,46 @@
+buildscript {
+    ext.kotlin_version = '1.0.1-2'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin2js'
+compileKotlin2Js.kotlinOptions.outputFile = "$buildDir/js/react.kt_main.js"
+compileKotlin2Js.kotlinOptions.sourceMap = true
+compileTestKotlin2Js.kotlinOptions.outputFile = "$buildDir/js/react.kt_test.js"
+compileTestKotlin2Js.kotlinOptions.sourceMap = true
+
+apply plugin: 'maven'
+
+group = 'com.github.kotlin-everywhere'
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
+    compile 'com.github.kotlin-everywhere:JavaScript.kt:b1fffdcf06'
+}
+
+
+jar {
+    dependsOn compileKotlin2Js
+    from("$buildDir/js/react.kt_main.js", "$buildDir/js/react.kt_main.meta.js")
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
