@@ -30,4 +30,17 @@ class IntegrationTest {
         assertEquals(1, fixture.childElementCount)
         assertEquals("Hello, World!", fixture.children().first().textContent)
     }
+
+    @Test
+    fun testStatelessWithProp() {
+        val Hello = stateless { prop: HelloProp ->
+            Div { +"Hello, ${prop.name}!" }
+        }
+
+        ReactDOM.render(Hello(HelloProp(name = "John")), fixture)
+        assertEquals(1, fixture.childElementCount)
+        assertEquals("Hello, John!", fixture.children().first().textContent)
+    }
 }
+
+data class HelloProp(val name: String)
