@@ -6,14 +6,23 @@ interface ReactElement
 
 @native
 object React {
-    fun createElement(elementName: String, prop: Any?, vararg children: Any?): ReactElement
-    fun createElement(statelessComponent: () -> ReactElement?, prop: Any?, vararg children: Any?): ReactElement
-    fun <T> createElement(statelessComponent: (T) -> ReactElement?, prop: Any?, vararg children: Any?): ReactElement
+    fun createElement(elementName: String, props: Any?, vararg children: Any?): ReactElement
+    fun createElement(statelessComponent: () -> ReactElement?, props: Any?, vararg children: Any?): ReactElement
+    fun <T> createElement(statelessComponent: (T) -> ReactElement?, props: T, vararg children: Any?): ReactElement
+    fun <T> createElement(component: (T) -> Component<T, *>?, props: T, vararg children: Any?): ReactElement
 }
 
 @native
 object ReactDOM {
     fun render(reactElement: ReactElement, element: Element)
+}
+
+@native("React.Component")
+abstract class Component<P, S>(val props: P) {
+    var state: S
+    fun setState(state: S)
+
+    abstract fun render(): ReactElement?
 }
 
 fun stateless(component: () -> ReactElement?): () -> ReactElement {

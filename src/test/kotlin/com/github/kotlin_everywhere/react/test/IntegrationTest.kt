@@ -1,10 +1,9 @@
 package com.github.kotlin_everywhere.react.test
 
-import com.github.kotlin_everywhere.react.Div
-import com.github.kotlin_everywhere.react.ReactDOM
-import com.github.kotlin_everywhere.react.stateless
+import com.github.kotlin_everywhere.react.*
 import org.junit.Test
 import org.w3c.dom.Element
+import org.w3c.dom.HTMLButtonElement
 import kotlin.browser.document
 import kotlin.dom.children
 import kotlin.test.assertEquals
@@ -32,7 +31,7 @@ class IntegrationTest {
     }
 
     @Test
-    fun testStatelessWithProp() {
+    fun testStatelessWithProps() {
         val Hello = stateless { prop: HelloProp ->
             Div { +"Hello, ${prop.name}!" }
         }
@@ -41,6 +40,39 @@ class IntegrationTest {
         assertEquals(1, fixture.childElementCount)
         assertEquals("Hello, John!", fixture.children().first().textContent)
     }
+
+    @Test
+    fun testComponent() {
+        ReactDOM.render(Count.factory(CountProps(message = "Increase")), fixture)
+        val div = fixture.children[0]!!
+        val button = div.getElementsByTagName("button")[0]!! as HTMLButtonElement
+        assertEquals("Increase", button.value)
+        assertEquals("Count: 0", div.getElementsByTagName("span")[0]!!.textContent)
+        button.click()
+        assertEquals("Count: 1", div.getElementsByTagName("span")[0]!!.textContent)
+    }
 }
 
 data class HelloProp(val name: String)
+
+data class CountProps(val message: String)
+data class CountState(val count: Int)
+class Count(props: CountProps) : Component<CountProps, CountState>(props) {
+    init {
+        state = CountState(0)
+    }
+
+    override fun render(): ReactElement? {
+        return Div {
+            button(value = props.message, onClick = { setState(state.copy(count = state.count + 1)) })
+            span { +"Count: ${state.count}" }
+        }
+    }
+
+    companion object {
+        val _constructor: (CountProps) -> Count = ::Count
+        val factory = { props: CountProps ->
+            React.createElement(_constructor, props)
+        }
+    }
+}
