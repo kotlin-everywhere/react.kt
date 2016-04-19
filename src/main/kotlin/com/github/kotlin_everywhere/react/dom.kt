@@ -9,11 +9,7 @@ private fun <T> jsObject(): T {
 class Container {
     val children: MutableList<Any?> = mutableListOf()
 
-    operator fun String.unaryPlus() {
-        children.add(this)
-    }
-
-    operator fun ReactElement.unaryPlus() {
+    operator fun Any?.unaryPlus() {
         children.add(this)
     }
 }
