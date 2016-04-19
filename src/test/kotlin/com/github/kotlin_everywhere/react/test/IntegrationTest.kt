@@ -80,9 +80,6 @@ class Count(props: CountProps) : Component<CountProps, CountState>(props) {
     }
 
     companion object {
-        val _constructor: (CountProps) -> Count = ::Count
-        val factory = { props: CountProps ->
-            React.createElement(_constructor, props)
-        }
+        val factory = Factory(::Count)
     }
 }

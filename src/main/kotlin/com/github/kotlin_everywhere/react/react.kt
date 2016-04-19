@@ -12,6 +12,12 @@ object React {
     fun <T> createElement(component: (T) -> Component<T, *>?, props: T, vararg children: Any?): ReactElement
 }
 
+fun <P, T : Component<P, *>> Factory(constructor: (P) -> T): (P) -> ReactElement {
+    return { props ->
+        React.createElement(constructor, props)
+    }
+}
+
 @native
 object ReactDOM {
     fun render(reactElement: ReactElement, element: Element)
