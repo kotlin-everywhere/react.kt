@@ -13,34 +13,32 @@ class Container {
         children.add(this)
     }
 
-    fun span(body: (Container.() -> Unit)?) {
-        children.add(Span(body))
-    }
-
-    fun button(value: String?, onClick: ((e: Event) -> Unit)? = null) {
-        children.add(Button(value = value, onClick=onClick))
+    operator fun ReactElement.unaryPlus() {
+        children.add(this)
     }
 }
 
-fun Div(body: (Container.() -> Unit)? = null): ReactElement {
-    if (body != null) {
-        return React.createElement("div", null, *Container().apply { body() }.children.toTypedArray())
+interface DOMAttribute {
+    // Generic
+    var id: String?
+    var className: String?
+
+    // Input Elements
+    var value: String?
+    var onClick: ((Event) -> Unit)?
+
+
+}
+
+fun attr(body: DOMAttribute.() -> Unit): DOMAttribute {
+    return jsObject<DOMAttribute>().apply { body() }
+}
+
+
+operator fun String.invoke(props: DOMAttribute? = null, body: (Container.() -> Unit)? = null): ReactElement {
+    return if (body != null) {
+        React.createElement(this, props, *Container().apply { body() }.children.toTypedArray())
     } else {
-        return React.createElement("div", null)
+        React.createElement(this, props)
     }
-}
-
-fun Span(body: (Container.() -> Unit)?): ReactElement {
-    if (body != null) {
-        return React.createElement("span", null, *Container().apply { body() }.children.toTypedArray())
-    } else {
-        return React.createElement("span", null)
-    }
-}
-
-fun Button(value: String? = null, onClick: ((Event) -> Unit)? = null): ReactElement {
-    val props = js("({})")
-    props.value = value
-    props.onClick = onClick
-    return React.createElement("button", props)
 }

@@ -14,7 +14,7 @@ class IntegrationTest {
 
     @Test
     fun testRender() {
-        ReactDOM.render(Div { +"Hello, World!" }, fixture)
+        ReactDOM.render("div" { +"Hello, World!" }, fixture)
         assertEquals(1, fixture.childElementCount)
         assertEquals("Hello, World!", fixture.children().first().textContent)
     }
@@ -22,7 +22,7 @@ class IntegrationTest {
     @Test
     fun testStateless() {
         val HelloWorld = stateless {
-            Div { +"Hello, World!" }
+            "div" { +"Hello, World!" }
         }
 
         ReactDOM.render(HelloWorld(), fixture)
@@ -33,7 +33,7 @@ class IntegrationTest {
     @Test
     fun testStatelessWithProps() {
         val Hello = stateless { prop: HelloProp ->
-            Div { +"Hello, ${prop.name}!" }
+            "div" { +"Hello, ${prop.name}!" }
         }
 
         ReactDOM.render(Hello(HelloProp(name = "John")), fixture)
@@ -51,6 +51,15 @@ class IntegrationTest {
         button.click()
         assertEquals("Count: 1", div.getElementsByTagName("span")[0]!!.textContent)
     }
+
+    @Test
+    fun testDOMAttribute() {
+        ReactDOM.render("div"(attr { id = "id"; className = "className" }), fixture)
+        val div = fixture.children[0]!!
+        assertEquals("div", div.tagName.toLowerCase())
+        assertEquals("id", div.id)
+        assertEquals("className", div.className)
+    }
 }
 
 data class HelloProp(val name: String)
@@ -63,9 +72,9 @@ class Count(props: CountProps) : Component<CountProps, CountState>(props) {
     }
 
     override fun render(): ReactElement? {
-        return Div {
-            button(value = props.message, onClick = { setState(state.copy(count = state.count + 1)) })
-            span { +"Count: ${state.count}" }
+        return "div" {
+            +"button"(attr { value = props.message; onClick = { setState(state.copy(count = state.count + 1)) } })
+            +"span" { +"Count: ${state.count}" }
         }
     }
 
