@@ -27,7 +27,6 @@ interface DOMAttribute {
     var value: String?
     var onClick: ((Event) -> Unit)?
 
-
 }
 
 fun attr(body: DOMAttribute.() -> Unit): DOMAttribute {

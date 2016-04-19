@@ -54,11 +54,12 @@ class IntegrationTest {
 
     @Test
     fun testDOMAttribute() {
-        ReactDOM.render("div"(attr { id = "id"; className = "className" }), fixture)
+        ReactDOM.render("div"(attr { id = "id"; className = "className"; asDynamic()["href"] = "href" }), fixture)
         val div = fixture.children[0]!!
         assertEquals("div", div.tagName.toLowerCase())
         assertEquals("id", div.id)
         assertEquals("className", div.className)
+        assertEquals("href", div.getAttribute("href"))
     }
 }
 
