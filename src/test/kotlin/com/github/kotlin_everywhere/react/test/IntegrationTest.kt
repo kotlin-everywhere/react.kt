@@ -14,16 +14,14 @@ class IntegrationTest {
 
     @Test
     fun testRender() {
-        ReactDOM.render("div" { +"Hello, World!" }, fixture)
+        ReactDOM.render(Div { +"Hello, World!" }, fixture)
         assertEquals(1, fixture.childElementCount)
         assertEquals("Hello, World!", fixture.children().first().textContent)
     }
 
     @Test
     fun testStateless() {
-        val HelloWorld = stateless {
-            "div" { +"Hello, World!" }
-        }
+        val HelloWorld = stateless { Div { +"Hello, World!" } }
 
         ReactDOM.render(HelloWorld(), fixture)
         assertEquals(1, fixture.childElementCount)
@@ -32,9 +30,7 @@ class IntegrationTest {
 
     @Test
     fun testStatelessWithProps() {
-        val Hello = stateless { prop: HelloProp ->
-            "div" { +"Hello, ${prop.name}!" }
-        }
+        val Hello = stateless { prop: HelloProp -> Div { +"Hello, ${prop.name}!" } }
 
         ReactDOM.render(Hello(HelloProp(name = "John")), fixture)
         assertEquals(1, fixture.childElementCount)
@@ -54,12 +50,25 @@ class IntegrationTest {
 
     @Test
     fun testDOMAttribute() {
-        ReactDOM.render("div"(attr { id = "id"; className = "className"; asDynamic()["href"] = "href" }), fixture)
-        val div = fixture.children[0]!!
-        assertEquals("div", div.tagName.toLowerCase())
-        assertEquals("id", div.id)
-        assertEquals("className", div.className)
-        assertEquals("href", div.getAttribute("href"))
+        ReactDOM.render(
+                Div({ id = "container" }) {
+                    div({ className = "container-inner" }) {
+                        a({ href = "#" }) { +"Link" }
+                    }
+                },
+                fixture
+        )
+        val container = fixture.children[0]!!
+        assertEquals("div", container.tagName.toLowerCase())
+        assertEquals("container", container.id)
+
+        val containerInner = container.children[0]!!
+        assertEquals("container-inner", containerInner.className)
+
+        val a = containerInner.children[0]!!
+        assertEquals("#", a.getAttribute("href"))
+        assertEquals("Link", a.textContent)
+
     }
 }
 
@@ -73,9 +82,9 @@ class Count(props: CountProps) : Component<CountProps, CountState>(props) {
     }
 
     override fun render(): ReactElement? {
-        return "div" {
-            +"button"(attr { value = props.message; onClick = { setState(state.copy(count = state.count + 1)) } })
-            +"span" { +"Count: ${state.count}" }
+        return Div {
+            button({ value = props.message; onClick = { setState(state.copy(count = state.count + 1)) } })
+            span { +"Count: ${state.count}" }
         }
     }
 
