@@ -18,14 +18,14 @@ interface DOMAttribute {
     var alt: String?
     var async: String?
     var autoComplete: String?
-    var autoFocus: String?
+    var autoFocus: Boolean?
     var autoPlay: String?
     var capture: String?
     var cellPadding: String?
     var cellSpacing: String?
     var challenge: String?
     var charSet: String?
-    var checked: String?
+    var checked: Boolean?
     var cite: String?
     var classID: String?
     var className: String?
