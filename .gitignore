@@ -2,5 +2,13 @@
 .gradle/
 build/
 
+#python
+*.pyc
+venv/
+*.egg-info
+
 #Intellij
 .idea/
+
+#vim
+*.swp
