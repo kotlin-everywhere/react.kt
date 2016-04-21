@@ -37,8 +37,30 @@ fun stateless(component: () -> ReactElement?): () -> ReactElement {
     }
 }
 
-fun <T> stateless(component: (T) -> ReactElement?): (T) -> ReactElement {
-    return {
-        React.createElement(component, it)
+interface DataProps<T> {
+    var data: T
+}
+
+class stateless<T>(private val component: (T) -> ReactElement?) {
+    val propComponent = { prop: DataProps<T> ->
+        component(prop.data)
     }
+
+    operator fun invoke(data: T): ReactElement {
+        val props = jsObject<DataProps<T>>()
+        props.data = data
+        return React.createElement(propComponent, props)
+    }
+
+    operator fun invoke(key: Any, data: T): ReactElement {
+        val props = jsObject<DataRectProp<T>>()
+        props.data = data
+        props.key = key
+        return React.createElement(propComponent, props)
+    }
+}
+
+
+interface DataRectProp<T> : DataProps<T> {
+    var key: Any
 }

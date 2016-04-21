@@ -4,6 +4,7 @@ import com.github.kotlin_everywhere.react.*
 import org.junit.Test
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLButtonElement
+import org.w3c.dom.HTMLDivElement
 import kotlin.browser.document
 import kotlin.dom.children
 import kotlin.test.assertEquals
@@ -30,11 +31,21 @@ class IntegrationTest {
 
     @Test
     fun testStatelessWithProps() {
-        val Hello = stateless { prop: HelloProp -> Div { +"Hello, ${prop.name}!" } }
+        val Hello = stateless { data: HelloData -> Div { +"Hello, ${data.name}!" } }
 
-        ReactDOM.render(Hello(HelloProp(name = "John")), fixture)
+        ReactDOM.render(Hello(HelloData(name = "John")), fixture)
         assertEquals(1, fixture.childElementCount)
         assertEquals("Hello, John!", fixture.children().first().textContent)
+
+        // test children with key props
+        ReactDOM.render(Div {
+            +arrayOf("Bill", "Jane").map { Hello(it, HelloData(it)) }.toTypedArray()
+        }, fixture)
+        assertEquals(1, fixture.childElementCount)
+        val div = fixture.children().first() as HTMLDivElement
+        assertEquals(2, div.childElementCount)
+        assertEquals("Hello, Bill!", div.children()[0].textContent)
+        assertEquals("Hello, Jane!", div.children()[1].textContent)
     }
 
     @Test
@@ -72,7 +83,7 @@ class IntegrationTest {
     }
 }
 
-data class HelloProp(val name: String)
+data class HelloData(val name: String)
 
 data class CountProps(val message: String)
 data class CountState(val count: Int)
