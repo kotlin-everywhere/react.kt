@@ -9,6 +9,8 @@ internal fun <T> jsObject(): T {
 
 
 interface DOMAttribute {
+    var key: Any?
+
     var accept: String?
     var acceptCharset: String?
     var accessKey: String?
