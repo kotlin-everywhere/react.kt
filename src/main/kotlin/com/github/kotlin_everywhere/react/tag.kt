@@ -7,6 +7,10 @@ class Container {
         children.add(this)
     }
 
+    operator fun List<*>.unaryPlus() {
+        children.add(this.toTypedArray())
+    }
+
 
     fun a(props: (DOMAttribute.() -> Unit)? = null, init: (Container.() -> Unit)? = null) {
         children.add(A(props, init))

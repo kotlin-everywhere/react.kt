@@ -39,7 +39,7 @@ class IntegrationTest {
 
         // test children with key props
         ReactDOM.render(Div {
-            +arrayOf("Bill", "Jane").map { Hello(it, HelloData(it)) }.toTypedArray()
+            +arrayOf("Bill", "Jane").map { Hello(it, HelloData(it)) }
         }, fixture)
         assertEquals(1, fixture.childElementCount)
         val div = fixture.children().first() as HTMLDivElement
