@@ -8,6 +8,8 @@ import org.w3c.dom.HTMLDivElement
 import kotlin.browser.document
 import kotlin.dom.children
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IntegrationTest {
     val fixture: Element
@@ -79,7 +81,21 @@ class IntegrationTest {
         val a = containerInner.children[0]!!
         assertEquals("#", a.getAttribute("href"))
         assertEquals("Link", a.textContent)
+    }
 
+    @Test
+    fun testStoreSubscribe() {
+        val store = object : Store<StoreState>(StoreState()) {
+            fun setState(state: StoreState) {
+                this.state = state
+            }
+        }
+
+        var isSubscribeCalled = false;
+        store.subscribe { isSubscribeCalled = true }
+        assertFalse(isSubscribeCalled)
+        store.setState(store.state)
+        assertTrue(isSubscribeCalled)
     }
 }
 
@@ -103,3 +119,5 @@ class Count(props: CountProps) : Component<CountProps, CountState>(props) {
         val factory = Factory(::Count)
     }
 }
+
+class StoreState
