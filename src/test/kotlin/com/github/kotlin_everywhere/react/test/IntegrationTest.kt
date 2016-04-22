@@ -97,6 +97,18 @@ class IntegrationTest {
         store.setState(store.state)
         assertTrue(isSubscribeCalled)
     }
+
+    @Test
+    fun testStore() {
+        val store = object : Store<StoreState>(StoreState("Bill")) {
+        }
+
+        val HelloWord = stateless(store) { data: StoreState -> Div { +"Hello, ${data.message}" } }
+
+        ReactDOM.render(HelloWord(), fixture)
+        assertEquals("Hello, Bill", fixture.textContent)
+        assertEquals("Hello, Jane", fixture.textContent)
+    }
 }
 
 data class HelloData(val name: String)
@@ -120,4 +132,4 @@ class Count(props: CountProps) : Component<CountProps, CountState>(props) {
     }
 }
 
-class StoreState
+data class StoreState(val message: String)
