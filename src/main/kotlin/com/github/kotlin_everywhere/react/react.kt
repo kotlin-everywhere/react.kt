@@ -60,23 +60,34 @@ class stateless<T>(private val component: (T) -> ReactElement?) {
     }
 }
 
-interface PropsWithState<S> {
-    val state: S
-}
-
-class StoreProvider<>() : Component<Any?, S>(null) {
-    override fun render(): ReactElement? {
-        throw UnsupportedOperationException()
-    }
-}
-
-fun <T : Any, S : Store<T>> stateless(store: S, component: (T) -> ReactElement?): () -> ReactElement {
-    return {
-        React.createElement()
-    }
-}
-
-
 interface DataRectProp<T> : DataProps<T> {
     var key: Any
+}
+
+interface StoreComponentProps<S : Any> {
+    var store: Store<S>
+    var component: (S) -> ReactElement?
+}
+
+class StoreComponent<P : StoreComponentProps<S>, S : Any>(props: P) : Component<P, S>(props) {
+    init {
+        state = props.store.state
+        props.store.subscribe {
+            setState(props.store.state)
+        }
+    }
+
+    override fun render(): ReactElement? {
+        return props.component(state)
+    }
+}
+
+fun <S : Any> stateless(store: Store<S>, component: (S) -> ReactElement?): () -> ReactElement {
+    val props = jsObject<StoreComponentProps<S>>().apply { this.store = store; this.component = component }
+    val constructor: (StoreComponentProps<S>) -> StoreComponent<StoreComponentProps<S>, S> = { props: StoreComponentProps<S> ->
+        StoreComponent(props)
+    }
+    return {
+        React.createElement(constructor, props)
+    }
 }

@@ -85,8 +85,8 @@ class IntegrationTest {
 
     @Test
     fun testStoreSubscribe() {
-        val store = object : Store<StoreState>(StoreState()) {
-            fun setState(state: StoreState) {
+        val store = object : Store<EmptyStoreState>(EmptyStoreState()) {
+            fun setState(state: EmptyStoreState) {
                 this.state = state
             }
         }
@@ -101,12 +101,16 @@ class IntegrationTest {
     @Test
     fun testStore() {
         val store = object : Store<StoreState>(StoreState("Bill")) {
+            fun setMessage(message: String) {
+                this.state = this.state.copy(message = message)
+            }
         }
 
         val HelloWord = stateless(store) { data: StoreState -> Div { +"Hello, ${data.message}" } }
 
         ReactDOM.render(HelloWord(), fixture)
         assertEquals("Hello, Bill", fixture.textContent)
+        store.setMessage("Jane")
         assertEquals("Hello, Jane", fixture.textContent)
     }
 }
@@ -132,4 +136,5 @@ class Count(props: CountProps) : Component<CountProps, CountState>(props) {
     }
 }
 
+class EmptyStoreState
 data class StoreState(val message: String)
