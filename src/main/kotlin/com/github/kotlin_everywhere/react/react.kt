@@ -64,21 +64,28 @@ interface DataRectProp<T> : DataProps<T> {
     var key: Any
 }
 
+interface StoreComponentState<S : Any> {
+    var storeState: S
+}
+
 interface StoreComponentProps<S : Any> {
     var store: Store<S>
     var component: (S) -> ReactElement?
 }
 
-class StoreComponent<P : StoreComponentProps<S>, S : Any>(props: P) : Component<P, S>(props) {
+class StoreComponent<P : StoreComponentProps<S>, S : Any>(props: P) : Component<P, StoreComponentState<S>>(props) {
     init {
-        state = props.store.state
+        state = jsObject<StoreComponentState<S>>()
+        state.storeState = props.store.state
         props.store.subscribe {
-            setState(props.store.state)
+            val state = jsObject<StoreComponentState<S>>()
+            state.storeState = props.store.state
+            setState(state)
         }
     }
 
     override fun render(): ReactElement? {
-        return props.component(state)
+        return props.component(state.storeState)
     }
 }
 
