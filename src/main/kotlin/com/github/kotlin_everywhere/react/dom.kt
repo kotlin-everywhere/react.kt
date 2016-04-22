@@ -2,9 +2,14 @@ package com.github.kotlin_everywhere.react
 
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
+import kotlin.Pair
 
 internal fun <T> jsObject(): T {
     return js("({})")
+}
+
+fun classNames(vararg pairs: Pair<String, Boolean>): String {
+    return pairs.filter { it.second }.map { it.first }.joinToString(" ")
 }
 
 
