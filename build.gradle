@@ -20,7 +20,7 @@ sourceSets {
 if ('teavmc' in project.gradle.startParameter.taskNames) {
     sourceSets.main.java.srcDirs += 'src/test/kotlin'
     apply plugin: "com.edibleday.teavm"
-    mainClassName = "com.example.test.MainKt"
+    mainClassName = 'org.junit.runner.JUnitCore'
     teavmc {
         generateSourceMap true
         copySources true
@@ -41,5 +41,7 @@ dependencies {
     compile group: 'org.teavm', name: 'teavm-jso-apis', version: '0.4.3'
     // http://mvnrepository.com/artifact/org.teavm/teavm-classlib
     compile group: 'org.teavm', name: 'teavm-classlib', version: '0.4.3'
+    // http://mvnrepository.com/artifact/org.teavm/teavm-platform
+    compile group: 'org.teavm', name: 'teavm-platform', version: '0.4.3'
 }
 
