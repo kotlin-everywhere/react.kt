@@ -1,0 +1,45 @@
+buildscript {
+    ext.kotlin_version = '1.0.2'
+
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        classpath 'com.edibleday:teavm-gradle-plugin:0.4.3.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+}
+
+if ('teavmc' in project.gradle.startParameter.taskNames) {
+    sourceSets.main.java.srcDirs += 'src/test/kotlin'
+    apply plugin: "com.edibleday.teavm"
+    mainClassName = "com.example.test.MainKt"
+    teavmc {
+        generateSourceMap true
+        copySources true
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // http://mvnrepository.com/artifact/org.teavm/teavm-dom
+    compile group: 'org.teavm', name: 'teavm-dom', version: '0.3.2'
+    // http://mvnrepository.com/artifact/org.teavm/teavm-jso
+    compile group: 'org.teavm', name: 'teavm-jso', version: '0.4.3'
+    // http://mvnrepository.com/artifact/org.teavm/teavm-jso-apis
+    compile group: 'org.teavm', name: 'teavm-jso-apis', version: '0.4.3'
+    // http://mvnrepository.com/artifact/org.teavm/teavm-classlib
+    compile group: 'org.teavm', name: 'teavm-classlib', version: '0.4.3'
+}
+
